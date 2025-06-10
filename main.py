@@ -2,42 +2,33 @@ import discord
 import aiohttp
 import os 
 from dotenv import load_dotenv
-
 load_dotenv()
 DISCORD_BOT_TOKEN = os.getenv('BOT_TOKEN')
 OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions'
 OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')  # Add this to your .env file
-
-# Popular models on OpenRouter
 AVAILABLE_MODELS = {
     "deepseek-r1-qwen14b": "deepseek/deepseek-r1-distill-qwen-14b:free",
     "deepseek-r1-qwen32b": "deepseek/deepseek-r1-distill-qwen-32b:free",
     "deepseek-r1":"deepseek/deepseek-r1-0528:free",
     "deepseek-v3":"deepseek/deepseek-chat-v3-0324:free",
-}
+} # other models
 # deepseek/deepseek-r1-0528:free deepseek/deepseek-r1:free tngtech/deepseek-r1t-chimera:free deepseek/deepseek-chat:free
 # deepseek/deepseek-r1-0528-qwen3-8b:free deepseek/deepseek-r1-distill-llama-70b:free deepseek/deepseek-prover-v2:free
 DEFAULT_MODEL = "deepseek-v3"
-
 intents = discord.Intents.default()
 intents.message_content = True
-
 client = discord.Client(intents=intents)
-
 # Store session per user_id: model and message history
 user_sessions = {}
-
 @client.event
 async def on_ready():
     print(f'Bot online as {client.user}')
-
 def create_model_embed():
     embed = discord.Embed(
         title="Available Models",
         description="Choose a model by typing `!model model_name`",
         color=discord.Color.blue()
-    )
-    
+    ) 
     for model_id, model_name in AVAILABLE_MODELS.items():
         embed.add_field(name=model_id, value=model_name, inline=False)
     
@@ -107,8 +98,6 @@ async def on_message(message):
 
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "HTTP-Referer": "https://your-site-url.com",  # Optional but recommended
-            "X-Title": "Discord AI Bot"  # Optional but recommended
         }
 
         await message.channel.typing()
